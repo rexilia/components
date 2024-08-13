@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, output } from '@angular/core';
-import { map, Observable } from 'rxjs';
 import { FilterPipe } from '../common-utils/filter.pipe';
 import { ICountryList } from '../common-utils/interfaces';
+import { countries } from '../../assets/utils/countries';
 
 @Component({
   selector: 'app-dropdown',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FilterPipe],
+  imports: [CommonModule, FilterPipe],
   template: `<div
     style="height: 20rem;overflow-y: scroll;padding: 0.5rem;background-color: whitesmoke;width:inherit;border-radius: 0 0 0.25rem 0.25rem;"
   >
@@ -20,8 +19,7 @@ import { ICountryList } from '../common-utils/interfaces';
       (input)="getSearchText()"
       style="border-radius: 0.25rem;top:0;position:sticky; border: 1px solid grey; padding: 0.25rem;width:90%;margin-bottom: 0.25rem"
     />
-    @if(json | async; as data){@for(c of data.countries | filter:
-    searchText;track c){
+    @if(json; as data){@for(c of data | filter: searchText;track c){
     <div (click)="getValue(c)" class="list">
       <img
         [src]="c.image"
@@ -35,14 +33,14 @@ import { ICountryList } from '../common-utils/interfaces';
   styleUrl: './dropdown.component.scss',
 })
 export class DropdownComponent {
-  json!: Observable<any>;
+  json!: { [key: string]: string }[];
   searchText!: string;
   name: string = '';
   getCountryDetails = output<any>();
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
   ngOnInit(): void {
-    this.json = this.http.get('assets/utils/countries.json');
+    this.json = countries.countries;
   }
 
   getValue(country: ICountryList) {
